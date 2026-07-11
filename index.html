@@ -1,1 +1,358 @@
-<!doctype html><html><body>Initializing...</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impel Union — USD → EUR Conversion Outlook | July 9, 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1a1a1a;
+    padding: 32px 16px;
+  }
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  }
+  .header {
+    background: #1F4E79;
+    color: #fff;
+    padding: 28px 36px 22px;
+    border-bottom: 4px solid #EE0000;
+  }
+  .header-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #a8c4df;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .header .date {
+    font-size: 13px;
+    color: #ccdce8;
+  }
+  .body { padding: 28px 36px; }
+
+  .rate-banner {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .rate-card {
+    background: #f4f6f9;
+    border: 1px solid #e0e6ec;
+    border-radius: 8px;
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 170px;
+  }
+  .rate-card .label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6b8296;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .rate-card .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1F4E79;
+  }
+  .rate-card .sub {
+    font-size: 11.5px;
+    color: #666;
+    margin-top: 3px;
+  }
+  .rate-card.highlight { background: #D5E8F0; border-color: #2E75B6; }
+  .rate-card.reference .value { font-size: 17px; color: #6b8296; font-weight: 700; }
+
+  .section {
+    margin-bottom: 28px;
+    border-left: 4px solid #2E75B6;
+    padding-left: 16px;
+  }
+  .section h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #2E75B6;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .bottom-line {
+    background: #D5E8F0;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1F4E79;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  ul { margin: 0; padding-left: 20px; }
+  ul li { font-size: 13px; line-height: 1.75; color: #333; margin-bottom: 2px; }
+  b { color: #1a1a1a; }
+  .direction-up { color: #1a7c3e; font-weight: 700; }
+  .direction-down { color: #c0392b; font-weight: 700; }
+
+  .chart-wrap {
+    background: #f9fafb;
+    border: 1px solid #e0e6ec;
+    border-radius: 8px;
+    padding: 18px 18px 8px;
+    margin-bottom: 14px;
+  }
+  .chart-wrap canvas { max-height: 280px; }
+  .chart-caption { font-size: 11px; color: #6b8296; text-align: center; margin-top: 4px; font-style: italic; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 4px; }
+  th, td { text-align: left; padding: 7px 10px; font-size: 12.5px; }
+  thead th { background: #1F4E79; color: #fff; font-weight: 700; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; }
+  tbody tr:nth-child(even) { background: #f4f6f9; }
+  tbody td { border-bottom: 1px solid #e8ecf0; }
+  td.ref { color: #6b8296; }
+
+  .scenario-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .scenario-card { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 16px; border: 1px solid #e0e6ec; }
+  .scenario-card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .scenario-card.base { background: #eef3f7; }
+  .scenario-card.base h3 { color: #1F4E79; }
+  .scenario-card.favorable { background: #eaf6ef; }
+  .scenario-card.favorable h3 { color: #1a7c3e; }
+  .scenario-card.unfavorable { background: #fbeaea; }
+  .scenario-card.unfavorable h3 { color: #c0392b; }
+  .scenario-card .range { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .scenario-card p { font-size: 12px; line-height: 1.5; color: #333; }
+
+  .apex-take {
+    background: #1F4E79;
+    color: #fff;
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+  }
+  .apex-take .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #EE0000;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .apex-take p { font-size: 13.5px; line-height: 1.65; color: #e8edf2; margin-bottom: 8px; }
+  .apex-take p:last-child { margin-bottom: 0; }
+  .apex-take b { color: #fff; }
+
+  .disclaimer {
+    font-size: 11px;
+    color: #888;
+    font-style: italic;
+    line-height: 1.5;
+    padding: 10px 12px;
+    background: #f4f6f9;
+    border-radius: 4px;
+    margin-bottom: 22px;
+  }
+
+  .sources { padding: 20px 36px 28px; border-top: 1px solid #e8ecf0; }
+  .sources h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b8296; margin-bottom: 8px; }
+  .sources ol { padding-left: 18px; }
+  .sources li { font-size: 11px; line-height: 1.8; }
+  .sources a { color: #2E75B6; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-label">Impel Union — Market Analysis</div>
+    <h1>USD → EUR: What Your Dollar Buys</h1>
+    <div class="date">Prepared by APEX for Dean Stefanov, COO/CEO — July 9, 2026</div>
+  </div>
+
+  <div class="body">
+
+    <div class="rate-banner">
+      <div class="rate-card highlight">
+        <div class="label">€ Per $1 (Spot)</div>
+        <div class="value">€0.8757</div>
+        <div class="sub">Jul 8 close · <span class="direction-down">−0.06%</span> day-over-day, but <span class="direction-up">+5.2%</span> vs. Jan 27</div>
+      </div>
+      <div class="rate-card">
+        <div class="label">6-Month Range (€ per $1)</div>
+        <div class="value">€0.8321 – €0.8806</div>
+        <div class="sub">Worst: Jan 27 · Best: Jun 24</div>
+      </div>
+      <div class="rate-card">
+        <div class="label">6-Month Change (€ per $1)</div>
+        <div class="value direction-up">+1.9%</div>
+        <div class="sub">Jan avg → Jun avg — trend favors you</div>
+      </div>
+      <div class="rate-card reference">
+        <div class="label">Market Reference (EUR/USD)</div>
+        <div class="value">1.1419</div>
+        <div class="sub">Standard quote convention, for context only</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>1. Bottom Line</h2>
+      <div class="bottom-line">Every dollar you convert today buys ~€0.876 — about 5.2% more euro than on January 27, this year's worst day for converting dollars to euro. The trend all year has been moving in your favor, and it's still moving that way.</div>
+      <ul>
+        <li>Six months ago $1 got you as little as <b>€0.8321</b>. As of July 8, $1 gets you <b>€0.8757</b> — and the best day so far this year was June 24, when $1 briefly bought <b>€0.8806</b>.</li>
+        <li>The improvement is driven by dollar strength: a hawkish Fed, a wide Fed–ECB interest-rate gap, and safe-haven demand tied to the Strait of Hormuz conflict are all pushing more euro your way per dollar converted.</li>
+        <li>Rate cooled slightly off the June 24 peak but remains well above where the year started — read the chart below as "up = more euro for you."</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>2. Six-Month Trend</h2>
+      <div class="chart-wrap">
+        <canvas id="fxChart"></canvas>
+      </div>
+      <div class="chart-caption">Higher = more euro per dollar = better for you</div>
+      <table>
+        <thead><tr><th>Month</th><th>€ Per $1 (avg)</th><th>EUR/USD (reference)</th></tr></thead>
+        <tbody>
+          <tr><td>January</td><td><b>€0.8525</b></td><td class="ref">1.1731</td></tr>
+          <tr><td>February</td><td><b>€0.8455</b></td><td class="ref">1.1828</td></tr>
+          <tr><td>March</td><td><b>€0.8642</b></td><td class="ref">1.1571</td></tr>
+          <tr><td>April</td><td><b>€0.8557</b></td><td class="ref">1.1686</td></tr>
+          <tr><td>May</td><td><b>€0.8561</b></td><td class="ref">1.1681</td></tr>
+          <tr><td>June</td><td><b>€0.8688</b></td><td class="ref">1.1510</td></tr>
+          <tr><td>July (MTD)</td><td><b>€0.8775</b></td><td class="ref">1.1396</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>3. What's Driving It</h2>
+      <ul>
+        <li><b>Fed vs. ECB rate gap (primary driver):</b> Fed holds at <b>3.50–3.75%</b> (June 17, Kevin Warsh's first meeting as Chair) with a hawkish dot-plot flip toward a possible <i>hike</i> — 2026 inflation projections raised to 3.6% headline / 3.3% core. ECB holds at <b>2.15%</b>. A ~160bp gap keeps the dollar attractive and pushes more euro your way per dollar converted. 🟢 Favorable.</li>
+        <li><b>Dollar Index (DXY) strength:</b> Broke above 100 (~100.7–101.1), highest since May 2025, on Fed hawkishness plus safe-haven flows. 🟢 Favorable.</li>
+        <li><b>Strait of Hormuz conflict:</b> Active since Feb 28, 2026. A June 17 US–Iran memorandum briefly calmed markets, but it's unraveling fast — Trump said the ceasefire was "over" July 8, and the US struck Iran again July 9 with Iran retaliating against Bahrain/Kuwait/Qatar shipping. Escalation drives safe-haven money into the dollar, meaning more euro per dollar for you. 🟢 Favorable.</li>
+        <li><b>US labor data:</b> Strong April jobs prints cut expectations for Fed rate cuts, reinforcing dollar strength — and your euro-per-dollar rate — through Q2. 🟢 Favorable.</li>
+        <li><b>Countervailing risk:</b> If the Hormuz ceasefire is restored or US inflation cools sharply, the dollar could give back gains quickly and you'd get fewer euro per dollar. This is the main risk to the current favorable trend. 🔴 Watch.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>4. Catalysts in the Next Two Weeks (Jul 9 – Jul 23)</h2>
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Effect on € you get per $1</th></tr></thead>
+        <tbody>
+          <tr><td><b>Ongoing</b></td><td>Hormuz ceasefire collapse / Iran retaliation</td><td>Biggest near-term swing factor. Further escalation → <span class="direction-up">more euro per dollar</span>. De-escalation/ceasefire restored → <span class="direction-down">fewer euro per dollar</span>, possibly fast.</td></tr>
+          <tr><td><b>Jul 14</b></td><td>US CPI (June)</td><td>Hot print reinforces Fed hawkishness → <span class="direction-up">more euro per dollar</span>. Cool print revives rate-cut bets → <span class="direction-down">fewer euro per dollar</span>.</td></tr>
+          <tr><td><b>Jul 23</b></td><td>ECB rate decision</td><td>Hold at 2.15% expected → keeps your rate elevated. A hawkish surprise (hike signal) → <span class="direction-down">fewer euro per dollar</span>.</td></tr>
+          <tr><td>Jul 28–29</td><td>Next FOMC meeting</td><td>Outside this window, but markets may start pricing it in late in the period — watch for a pre-meeting bump in euro per dollar if hike odds firm up.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>5. Two-Week Outlook</h2>
+      <div class="bottom-line">Base case: expect roughly €0.862 – €0.893 per dollar over the next two weeks, with near-term bias toward the higher end (more euro for you) given active Hormuz escalation and a hawkish Fed backdrop.</div>
+      <div class="scenario-grid">
+        <div class="scenario-card favorable">
+          <h3>More euro per dollar</h3>
+          <div class="range">€0.885 – €0.917</div>
+          <p>Hormuz ceasefire fully collapses, hot CPI print, or Fed hike odds firm up ahead of Jul 28–29. Best-case window to convert.</p>
+        </div>
+        <div class="scenario-card base">
+          <h3>Range-bound (most likely)</h3>
+          <div class="range">€0.862 – €0.893</div>
+          <p>Status quo: Fed hawkish hold, ECB hawkish hold, Hormuz tension elevated but not resolved either way.</p>
+        </div>
+        <div class="scenario-card unfavorable">
+          <h3>Fewer euro per dollar</h3>
+          <div class="range">€0.840 – €0.862</div>
+          <p>Hormuz ceasefire restored, soft CPI revives Fed cut bets, or ECB signals a hike. Worst-case window — waiting past this would cost you euro.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">This is not financial advice. FX markets are volatile and short-term moves are inherently unpredictable — treat the ranges above as scenario framing, not a guarantee. For a transaction of meaningful size, consider consulting a licensed financial advisor or your bank's treasury/FX desk, especially for hedging tools (forward contracts, limit orders) that remove timing risk entirely.</div>
+
+    <div class="apex-take">
+      <div class="label">APEX Take — Conversion Strategy</div>
+      <p>Every driver in play right now — the Fed-ECB rate gap, the Fed's hawkish tilt under new Chair Warsh, and a rapidly escalating Hormuz conflict — is pushing more euro your way per dollar converted. You're already getting meaningfully more euro per dollar than you were in January.</p>
+      <p><b>Recommendation:</b> Don't wait for a "perfect" peak — FX timing is a coin flip beyond a few days out, and the risk of a sudden ceasefire or soft CPI print handing back some of that euro-per-dollar gain is real. Convert <b>a meaningful portion now (e.g., 60–70%)</b> at ~€0.876 per dollar to lock in the current favorable rate, and hold the remainder to convert around <b>July 14 (CPI)</b> and <b>July 23 (ECB decision)</b> in case either pushes your rate even higher. If your bank or transfer provider offers a forward contract or rate alert/limit order, that's a better tool than manual timing for the remaining tranche.</p>
+    </div>
+
+  </div>
+
+  <div class="sources">
+    <h3>Sources</h3>
+    <ol>
+      <li><a href="https://www.x-rates.com/average/?from=EUR&to=USD&amount=1&year=2026">X-Rates — EUR/USD monthly averages 2026</a></li>
+      <li><a href="https://www.exchangerates.org.uk/EUR-USD-spot-exchange-rates-history-2026.html">ExchangeRates.org.uk — EUR/USD history 2026</a></li>
+      <li><a href="https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm">Federal Reserve — June 17, 2026 FOMC statement</a></li>
+      <li><a href="https://www.cnbc.com/2026/06/17/fed-interest-rate-decision-june-2026.html">CNBC — Fed holds rates, June 2026</a></li>
+      <li><a href="https://intellectia.ai/blog/fed-rate-decision-june-2026-market-impact">Intellectia — Fed hawkish pause, market impact</a></li>
+      <li><a href="https://cambridgecurrencies.com/euro-forecast/">Cambridge Currencies — Euro Forecast 2026</a></li>
+      <li><a href="https://www.investing.com/analysis/eurusd-enters-2026-near-key-resistance-as-fed-cuts-meet-ecb-hold-200672583">Investing.com — EUR/USD 2026 outlook, Fed vs. ECB</a></li>
+      <li><a href="https://www.bls.gov/schedule/news_release/cpi.htm">BLS — CPI release schedule (Jul 14, 2026)</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/2026_Iran_war_ceasefire">Wikipedia — 2026 Iran war ceasefire timeline</a></li>
+      <li><a href="https://www.npr.org/2026/07/09/g-s1-132670/us-iran-strikes">NPR — US strikes on Iran, July 9, 2026</a></li>
+      <li><a href="https://www.ms.now/liveblog/iran-war-news-today-july-8-2026">MSNBC — Iran war live updates, July 8, 2026</a></li>
+      <li><a href="https://www.mitrade.com/ae-en/insights/others/trading-basics/FOMC-meetings-and-2026-FOMC-meetings-schedule">Mitrade — 2026 FOMC meeting schedule</a></li>
+    </ol>
+  </div>
+</div>
+
+<script>
+const ctx = document.getElementById('fxChart').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul (MTD)'],
+    datasets: [{
+      label: '€ received per $1 (monthly avg.)',
+      data: [0.8525, 0.8455, 0.8642, 0.8557, 0.8561, 0.8688, 0.8775],
+      borderColor: '#2E75B6',
+      backgroundColor: 'rgba(46,117,182,0.10)',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#1F4E79',
+      pointRadius: 4,
+      tension: 0.25,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: false }
+    },
+    scales: {
+      y: {
+        min: 0.83,
+        max: 0.89,
+        title: { display: true, text: '€ per $1', color: '#6b8296', font: { size: 11 } },
+        ticks: { color: '#6b8296', font: { size: 11 } },
+        grid: { color: '#e8ecf0' }
+      },
+      x: {
+        ticks: { color: '#6b8296', font: { size: 11 } },
+        grid: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
